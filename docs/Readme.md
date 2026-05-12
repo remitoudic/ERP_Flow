@@ -1,4 +1,4 @@
-# AI Workflow Builder for Odoo
+# AI Workflow Builder for ERP (Odoo)
 ## High-Level Implementation Plan
 
 ---
