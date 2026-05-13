@@ -5,7 +5,7 @@
 
 # 1. Product Vision
 
-Build a platform that allows companies to create enterprise workflows using:
+Build a platform that allows companies to create enterprise ERP workflows using:
 - natural language,
 - visual workflow editing,
 - AI-assisted automation,
