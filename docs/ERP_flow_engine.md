@@ -1,4 +1,4 @@
-# Odoo Workflow Import Strategy for AI Workflow Builder POC
+# Odoo Workflow Import Strategy for AI Workflow
 
 ## Overview
 
