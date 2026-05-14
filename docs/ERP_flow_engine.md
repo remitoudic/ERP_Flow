@@ -18,9 +18,9 @@ An **external AI engine** reads your JSON workflow and automatically deploys it 
 ```mermaid
 flowchart LR
     A[User / AI] --> B[JSON Workflow]
-    B --> C[External Engine\nPython + FastAPI]
-    C <--> D[Odoo External API\nXML-RPC or JSON-RPC]
-    D --> E[Automated Actions\nServer Actions\nCustom Records]
+    B --> C[External Engine<br/>Python + FastAPI]
+    C <--> D[Odoo External API<br/>XML-RPC or JSON-RPC]
+    D --> E[Automated Actions<br/>Server Actions<br/>Custom Records]
 ```
 
 How It Works
