@@ -21,8 +21,7 @@ flowchart LR
     B --> C[External Engine\nPython + FastAPI]
     C <--> D[Odoo External API\nXML-RPC or JSON-RPC]
     D --> E[Automated Actions\nServer Actions\nCustom Records]
-    
-
+```
 
 How It Works
 
@@ -73,8 +72,7 @@ flowchart LR
     A[JSON Workflow] --> B[Activepieces / n8n]
     B <--> C[Odoo Connector]
     C --> D[Odoo CRM, Sales, etc.]
-
-
+```
 
 How It Works
 
