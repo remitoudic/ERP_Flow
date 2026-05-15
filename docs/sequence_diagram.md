@@ -13,6 +13,7 @@ sequenceDiagram
     actor User
     participant FE as Frontend<br/>React / Next.js
     participant BE as Backend<br/>ERP Flow Engine<br/>Python + FastAPI
+    participant LLM as LLM Server<br/>Ollama<br/>Local AI Model
     participant API as Odoo External API<br/>XML-RPC / JSON-RPC
     participant Odoo as Odoo<br/>Automated Actions<br/>Server Actions
 
@@ -24,9 +25,15 @@ sequenceDiagram
     FE->>FE: Display visual workflow editor
     FE->>BE: POST /workflows — Send plain English description
 
-    Note over BE: AI parses natural language<br/>into structured JSON workflow
+    BE->>LLM: Send plain English + system prompt
+    Note over LLM: Parse natural language<br/>Extract trigger, conditions,<br/>actions, and sequences
 
-    BE-->>FE: Return JSON workflow structure
+    LLM->>LLM: Identify workflow components:<br/>trigger, decision nodes,<br/>actions, wait steps, branches
+
+    LLM-->>BE: Return structured JSON workflow
+    Note over BE: Validate JSON schema<br/>Check Odoo model references<br/>Verify action feasibility
+
+    BE-->>FE: Return validated JSON workflow
     FE->>FE: Render visual workflow graph
     FE-->>User: Show workflow for review & validation
 
@@ -99,6 +106,7 @@ sequenceDiagram
 | Component | Role | Technology |
 |-----------|------|------------|
 | **Frontend** | User interface for workflow description, visual editing, and monitoring | React / Next.js |
-| **Backend (ERP Flow Engine)** | AI parsing, JSON workflow generation, deployment orchestration | Python + FastAPI |
+| **Backend (ERP Flow Engine)** | Orchestrates the full pipeline: receives user input, calls the LLM, validates output, deploys to Odoo | Python + FastAPI |
+| **LLM Server (Ollama)** | Parses plain English into structured JSON workflows (trigger, conditions, actions, sequences) | Ollama + Local model (e.g. Gemma) |
 | **Odoo External API** | Bridge between the engine and Odoo's internal models | XML-RPC / JSON-RPC |
 | **Odoo Automated Actions** | Live execution of deployed workflows inside Odoo | ir.actions.server, mail.template, mail.activity |
