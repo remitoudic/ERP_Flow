@@ -6,7 +6,7 @@ This document explains two practical approaches to convert the **JSON workflow**
 
 ---
 
-### 3. Hybrid Approach (Recommended for AI Workflow Builder Vision)
+### 1. Hybrid Approach (Recommended for AI Workflow Builder Vision)
 
 This is the **most strategic** approach for building a real AI Workflow Builder product.
 
@@ -56,7 +56,7 @@ Best suited for: Mid to long-term POC that demonstrates the real product value.
 
 
 
-### 4. Alternative: Use External Workflow Tools
+### 2. Alternative: Use External Workflow Tools
 
 Use a powerful open-source no-code automation tool as middleware between your JSON workflow and Odoo.
 
