@@ -11,7 +11,7 @@ This diagram shows the end-to-end data flow when a user describes a CRM workflow
 ```mermaid
 sequenceDiagram
     actor User
-    participant FE as Frontend<br/>React / Next.js
+    participant FE as Frontend<br/>Vue.js + Vue Flow
     participant BE as Backend<br/>ERP Flow Engine<br/>Python + FastAPI
     participant LLM as LLM Server<br/>Ollama<br/>Local AI Model
     participant API as Odoo External API<br/>XML-RPC / JSON-RPC
@@ -105,7 +105,7 @@ sequenceDiagram
 
 | Component | Role | Technology |
 |-----------|------|------------|
-| **Frontend** | User interface for workflow description, visual editing, and monitoring | React / Next.js |
+| **Frontend** | User interface for workflow description, visual editing, and monitoring | Vue.js + [Vue Flow](https://vueflow.dev) |
 | **Backend (ERP Flow Engine)** | Orchestrates the full pipeline: receives user input, calls the LLM, validates output, deploys to Odoo | Python + FastAPI |
 | **LLM Server (Ollama)** | Parses plain English into structured JSON workflows (trigger, conditions, actions, sequences) | Ollama + Local model (e.g. Gemma) |
 | **Odoo External API** | Bridge between the engine and Odoo's internal models | XML-RPC / JSON-RPC |
