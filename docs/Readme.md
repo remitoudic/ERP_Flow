@@ -10,10 +10,10 @@ Navigate through the core pillars of our system:
 
 | Phase | Document | Description |
 | :--- | :--- | :--- |
-| **Logic** | 💡 [Automation Idea](file:///Users/Remi/Desktop/ERP_Flow/docs/Automation_idea.md) | Business logic, CRM use-cases, and workflow logic definition. |
-| **Data Flow** | 🔄 [Sequence Diagram](file:///Users/Remi/Desktop/ERP_Flow/docs/sequence_diagram.md) | End-to-end visualization of how User input becomes Odoo action. |
-| **Architecture** | 🏗️ [Infrastructure](file:///Users/Remi/Desktop/ERP_Flow/docs/infrastructure.md) | Docker orchestration, container inventory, and stack rationale. |
-| **Integration** | ⚙️ [ERP Flow Engine](file:///Users/Remi/Desktop/ERP_Flow/docs/ERP_flow_engine.md) | Odoo API patterns, deployment strategies, and server actions. |
+| **Logic** | 💡 [Automation Idea](./Automation_idea.md) | Business logic, CRM use-cases, and workflow logic definition. |
+| **Data Flow** | 🔄 [Sequence Diagram](./sequence_diagram.md) | End-to-end visualization of how User input becomes Odoo action. |
+| **Architecture** | 🏗️ [Infrastructure](./infrastructure.md) | Docker orchestration, container inventory, and stack rationale. |
+| **Integration** | ⚙️ [ERP Flow Engine](./ERP_flow_engine.md) | Odoo API patterns, deployment strategies, and server actions. |
 
 ---
 
@@ -39,4 +39,6 @@ Our architecture is built on a "Durable Intelligence" philosophy:
 ---
 
 > [!TIP]
-> Start with the **[Automation Idea](file:///Users/Remi/Desktop/ERP_Flow/docs/Automation_idea.md)** to understand the business requirements, then move to the **[Infrastructure](file:///Users/Remi/Desktop/ERP_Flow/docs/infrastructure.md)** to see how it's built.
+> Start with the **[Automation Idea](./Automation_idea.md)** to understand the business requirements, then move to the **[Infrastructure](./infrastructure.md)** to see how it's built.
+>
+> For technical execution details, see the **[Implementation Plan](./implementation_plan.md)**.
