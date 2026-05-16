@@ -1,4 +1,4 @@
-# Odoo Workflow Import Strategy for AI Workflow
+# Odoo Workflow Import Strategy
 
 ## Overview
 
