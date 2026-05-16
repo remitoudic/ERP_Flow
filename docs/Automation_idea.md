@@ -11,6 +11,30 @@
 
 ### 2. Automated Workflow Structure
 
+```mermaid
+graph TD
+    Start([New Lead Created]) --> Source{Source: Web/LinkedIn?}
+    Source -- No --> End([End])
+    Source -- Yes --> AI_Decision{AI Qualification:<br/>Size >= 50 & Industry?}
+
+    AI_Decision -- ❌ No --> Cold[Add to Cold Nurture]
+    Cold --> Score[Assign Lower Lead Score]
+    
+    AI_Decision -- ✅ Yes --> Convert[Convert Lead to Opportunity]
+    Convert --> Assign[Assign to Enterprise Team]
+    Assign --> Email[Send Welcome Email]
+    Email --> Task[Create Task: Discovery Call +48h]
+    
+    Task --> Wait{Wait 7 Days}
+    Wait -- No Response --> Nurture[Start 3-Email Sequence]
+    Wait -- Interaction Detected --> Notify[Notify Sales Immediately]
+    
+    subgraph Later Stage Automation
+        Stage[Stage: Proposal Sent] --> Quote[Create Quotation Automatically]
+        Quote --> NotifyAM[Notify Account Manager]
+    end
+```
+
 #### **Trigger**
 - **Event**: New Lead Created in Odoo CRM
 - **Filters**: Source = Website Form **OR** LinkedIn
