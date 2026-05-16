@@ -105,7 +105,7 @@ sequenceDiagram
 
 | Component | Role | Technology |
 |-----------|------|------------|
-| **Frontend** | User interface for workflow description, visual editing, and monitoring | Vue.js + [Vue Flow](https://vueflow.dev) |
+| **Frontend** | User interface for workflow description, visual editing | Vue.js + [Vue Flow](https://vueflow.dev) |
 | **Backend (ERP Flow Engine)** | Orchestrates the full pipeline: receives user input, calls the LLM, validates output, deploys to Odoo | Python + FastAPI |
 | **LLM Server (Ollama)** | Parses plain English into structured JSON workflows (trigger, conditions, actions, sequences) | Ollama + Local model (e.g. Gemma) |
 | **Odoo External API** | Bridge between the engine and Odoo's internal models | XML-RPC / JSON-RPC |
