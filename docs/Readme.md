@@ -40,5 +40,3 @@ Our architecture is built on a "Durable Intelligence" philosophy:
 
 > [!TIP]
 > Start with the **[Automation Idea](./Automation_idea.md)** to understand the business requirements, then move to the **[Infrastructure](./infrastructure.md)** to see how it's built.
->
-> For technical execution details, see the **[Implementation Plan](./implementation_plan.md)**.
