@@ -22,7 +22,7 @@ sequenceDiagram
     User->>FE: Describe CRM workflow in plain English
     Note right of User: "When a new lead comes in<br/>from website or LinkedIn,<br/>check company size > 50..."
 
-    FE->>FE: Display visual workflow editor
+    FE->>FE: Initialize visual workspace (Loading state)
     FE->>BE: POST /workflows — Send plain English description
 
     BE->>LLM: Send plain English + system prompt
@@ -34,8 +34,8 @@ sequenceDiagram
     Note over BE: Validate JSON schema<br/>Check Odoo model references<br/>Verify action feasibility
 
     BE-->>FE: Return validated JSON workflow
-    FE->>FE: Render visual workflow graph
-    FE-->>User: Show workflow for review & validation
+    FE->>FE: Populate workspace with AI-generated nodes & edges
+    FE-->>User: Show interactive workflow for review
 
     Note over User,Odoo: Phase 2 — User Validation
 
