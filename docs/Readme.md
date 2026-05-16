@@ -1,4 +1,4 @@
-# 🌌 ERP Flow Automation: Technical Architecture & Design
+# ERP Flow Automation: Technical Architecture & Design
 
 Welcome to the central documentation hub for the **AI ERP Automation** project. This repository contains the architectural blueprints and technical specifications for a platform that transforms natural language intent into durable, visual, and high-performance ERP workflows.
 
