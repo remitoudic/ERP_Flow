@@ -1,10 +1,16 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 # Create a separate database for Temporal to isolate its event-sourcing records
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
     CREATE DATABASE temporal;
     GRANT ALL PRIVILEGES ON DATABASE temporal TO "$POSTGRES_USER";
+EOSQL
+
+# Create dedicated Odoo database user with CREATEDB privilege
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    CREATE USER "$ODOO_DB_USER" WITH PASSWORD '$ODOO_DB_PASSWORD' CREATEDB;
+    GRANT ALL PRIVILEGES ON DATABASE "$POSTGRES_DB" TO "$ODOO_DB_USER";
 EOSQL
 
 # Create high-performance cache tables using UNLOGGED to eliminate WAL overhead

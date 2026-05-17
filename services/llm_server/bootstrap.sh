@@ -6,7 +6,7 @@ set -e
 
 # Poll Ollama API until it is running and healthy
 echo "Waiting for Ollama API server to start..."
-until curl -s -f http://localhost:11434/ > /dev/null; do
+until ollama list > /dev/null 2>&1; do
   sleep 1
 done
 
