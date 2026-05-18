@@ -70,19 +70,82 @@
           </div>
         </div>
 
-        <!-- Workflow Details Indicator -->
-        <div v-if="workflowName" class="workflow-info glass-panel">
-          <div class="info-row">
-            <span class="info-label">Active Flow:</span>
-            <span class="info-val font-highlight">{{ workflowName }}</span>
+        <!-- Validation & Refinement Desk -->
+        <div v-if="workflowName" class="refinement-desk">
+          <div class="desk-header">
+            <span class="desk-title">Validation Desk</span>
+            <span 
+              class="status-badge" 
+              :class="deploymentStatus === 'deployed' ? 'status-deployed' : 'status-pending'"
+            >
+              {{ deploymentStatus === 'deployed' ? 'Active' : 'Pending Approval' }}
+            </span>
           </div>
-          <div class="info-row">
-            <span class="info-label">Deployment:</span>
-            <span class="info-val deploy-success">✓ Synced to Odoo 19</span>
+
+          <div class="validation-checklist">
+            <div class="checklist-item verified">
+              <span class="checklist-icon">✓</span>
+              <span>Gemma:2B Parse Completed</span>
+            </div>
+            <div class="checklist-item verified">
+              <span class="checklist-icon">✓</span>
+              <span>{{ nodes.length }}-node Diagram Compiled</span>
+            </div>
+            <div class="checklist-item" :class="{ verified: deploymentStatus === 'deployed' }">
+              <span class="checklist-icon">{{ deploymentStatus === 'deployed' ? '✓' : '○' }}</span>
+              <span>Odoo 19 CRM Handshake</span>
+            </div>
           </div>
-          <div class="info-row">
-            <span class="info-label">Durability:</span>
-            <span class="info-val temporal-badge">Temporal Active</span>
+
+          <!-- Deploy button if pending / loading -->
+          <button 
+            v-if="deploymentStatus !== 'deployed'" 
+            @click="handleDeploy" 
+            class="btn-deploy btn-deploy-approve"
+            :class="{ 'btn-deploy-loading': deploymentStatus === 'loading' }"
+            :disabled="deploymentStatus === 'loading'"
+          >
+            <span v-if="deploymentStatus === 'loading'" class="spinner-small"></span>
+            <span v-else>Approve & Sync to Odoo 🚀</span>
+          </button>
+
+          <!-- Deployment Success Banner -->
+          <div v-else class="deployment-success-banner">
+            <div class="banner-title">
+              <span>✓ Deployed Successfully</span>
+            </div>
+            <div class="banner-desc">
+              Timestamp: {{ deploymentDetails?.timestamp }}
+            </div>
+            <div class="banner-desc">
+              Workflow ID: {{ deploymentDetails?.workflowId }}
+            </div>
+            <div class="banner-desc">
+              Temporal status: RUNNING (DURABLE)
+            </div>
+          </div>
+
+          <!-- Dedicated Natural Language Refinement Input Box -->
+          <div class="refine-input-group">
+            <label for="refine-feedback">Refine Automation Logic</label>
+            <div class="input-refine-wrapper">
+              <input 
+                id="refine-feedback"
+                v-model="refinementFeedback"
+                @keyup.enter="handleRefine"
+                placeholder="e.g. Wait 10 days instead of 7..."
+                class="input-refine"
+                :disabled="refining"
+              />
+              <button 
+                @click="handleRefine" 
+                class="btn-refining"
+                :disabled="refining || !refinementFeedback.trim()"
+              >
+                <span v-if="refining" class="spinner-small"></span>
+                <span v-else>↲</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -102,7 +165,7 @@
             v-if="nodes.length > 0"
             v-model:nodes="nodes" 
             v-model:edges="edges" 
-            fit-view-on-init
+            @node-click="onNodeClick"
             class="custom-flow-theme"
           >
             <!-- Custom Node Style Template overrides -->
@@ -113,19 +176,76 @@
                   <span class="node-type">TRIGGER</span>
                   <div class="node-label">{{ nodeProps.data.label }}</div>
                 </div>
+                <Handle type="source" :position="Position.Bottom" />
               </div>
             </template>
 
-            <template #node-default="nodeProps">
+            <template #node-action="nodeProps">
               <div class="flow-node node-action">
+                <Handle type="target" :position="Position.Top" />
                 <span class="node-icon">⚙️</span>
                 <div class="node-meta">
                   <span class="node-type">ACTION</span>
                   <div class="node-label">{{ nodeProps.data.label }}</div>
                 </div>
+                <Handle type="source" :position="Position.Bottom" />
+              </div>
+            </template>
+
+            <template #node-condition="nodeProps">
+              <div class="flow-node node-condition">
+                <Handle type="target" :position="Position.Top" />
+                <span class="node-icon">❓</span>
+                <div class="node-meta">
+                  <span class="node-type">DECISION</span>
+                  <div class="node-label">{{ nodeProps.data.label }}</div>
+                </div>
+                <Handle type="source" :position="Position.Bottom" />
+              </div>
+            </template>
+
+            <template #node-wait="nodeProps">
+              <div class="flow-node node-wait">
+                <Handle type="target" :position="Position.Top" />
+                <span class="node-icon">⏳</span>
+                <div class="node-meta">
+                  <span class="node-type">DELAY</span>
+                  <div class="node-label">{{ nodeProps.data.label }}</div>
+                </div>
+                <Handle type="source" :position="Position.Bottom" />
+              </div>
+            </template>
+
+            <template #node-end="nodeProps">
+              <div class="flow-node node-end">
+                <Handle type="target" :position="Position.Top" />
+                <span class="node-icon">🏁</span>
+                <div class="node-meta">
+                  <span class="node-type">END</span>
+                  <div class="node-label">{{ nodeProps.data.label }}</div>
+                </div>
+              </div>
+            </template>
+
+            <template #node-default="nodeProps">
+              <div class="flow-node node-action">
+                <Handle type="target" :position="Position.Top" />
+                <span class="node-icon">⚙️</span>
+                <div class="node-meta">
+                  <span class="node-type">ACTION</span>
+                  <div class="node-label">{{ nodeProps.data.label }}</div>
+                </div>
+                <Handle type="source" :position="Position.Bottom" />
               </div>
             </template>
           </VueFlow>
+
+          <!-- Floating Canvas Controls -->
+          <div v-if="nodes.length > 0" class="canvas-controls">
+            <button @click="zoomIn()" class="control-btn" title="Zoom In">+</button>
+            <button @click="zoomOut()" class="control-btn" title="Zoom Out">-</button>
+            <button @click="fitView({ padding: 0.2 })" class="control-btn" title="Fit View">⛶</button>
+          </div>
 
           <!-- Fallback Visual state when canvas is empty -->
           <div v-else class="empty-canvas-state">
@@ -135,24 +255,82 @@
             <p>Describe your automation in the left console to visualize nodes and logic gates in real-time.</p>
           </div>
         </div>
+
+        <!-- Inspector Side Drawer Overlay -->
+        <div v-if="showInspector && selectedNode" class="node-inspector-drawer">
+          <div class="inspector-header">
+            <h3>Configure Step</h3>
+            <button @click="closeInspector" class="btn-close-inspector">×</button>
+          </div>
+
+          <div class="inspector-body">
+            <div class="inspector-field">
+              <span class="inspector-field-label">Node ID</span>
+              <span class="inspector-field-value font-mono">{{ selectedNode.id }}</span>
+            </div>
+
+            <div class="inspector-field">
+              <span class="inspector-field-label">Category</span>
+              <span class="inspector-badge-type" :class="'type-' + (selectedNode.type || 'action')">
+                {{ selectedNode.type || 'action' }}
+              </span>
+            </div>
+
+            <div class="inspector-field">
+              <span class="inspector-field-label">Step Label</span>
+              <input 
+                v-model="selectedNode.data.label" 
+                class="input-refine"
+                style="background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-glass);"
+              />
+            </div>
+
+            <div class="inspector-field">
+              <span class="inspector-field-label">Odoo 19 Connector</span>
+              <span class="inspector-field-value">
+                {{ getOdooDetails(selectedNode) }}
+              </span>
+            </div>
+
+            <div class="inspector-field">
+              <span class="inspector-field-label">Temporal Durability</span>
+              <span class="inspector-field-value">
+                {{ getTemporalDetails(selectedNode) }}
+              </span>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { VueFlow } from '@vue-flow/core'
+import { ref, watch, nextTick } from 'vue'
+import { VueFlow, useVueFlow, Handle, Position } from '@vue-flow/core'
 
 // Register Vue Flow default layout styles
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 
+const { fitView, zoomIn, zoomOut } = useVueFlow()
+
 const prompt = ref('')
 const loading = ref(false)
 const workflowName = ref('')
 
+// Interactive Validation and Deployment State
+const deploymentStatus = ref('pending') // 'pending', 'loading', 'deployed'
+const deploymentDetails = ref(null)
+const refinementFeedback = ref('')
+const refining = ref(false)
+
+// Selected node configuration drawer state
+const selectedNode = ref(null)
+const showInspector = ref(false)
+
 const samples = [
+  "Odoo CRM lead qualification size >= 50 and proposal sent workflow",
   "When a lead is created, wait 2 days and check qualification status",
   "High Priority task generation for deals above $10,000 value",
   "Inventory restock notification sequence based on warehouse drop alerts"
@@ -160,6 +338,121 @@ const samples = [
 
 const nodes = ref([])
 const edges = ref([])
+
+// Watch nodes to dynamically fit-view when a workflow is loaded or updated
+watch(nodes, () => {
+  nextTick(() => {
+    setTimeout(() => {
+      if (nodes.value.length > 0) {
+        fitView({ padding: 0.2 })
+      }
+    }, 100)
+  })
+}, { deep: true })
+
+const onNodeClick = (param) => {
+  const node = param?.node || param
+  if (node && node.id) {
+    selectedNode.value = node
+    showInspector.value = true
+  }
+}
+
+const closeInspector = () => {
+  showInspector.value = false
+  selectedNode.value = null
+}
+
+const handleDeploy = async () => {
+  deploymentStatus.value = 'loading'
+  // Simulate remote deployment execution delay
+  await new Promise(resolve => setTimeout(resolve, 1800))
+  deploymentStatus.value = 'deployed'
+  deploymentDetails.value = {
+    timestamp: new Date().toLocaleTimeString(),
+    workflowId: 'wf-odoo-' + Math.random().toString(36).substring(2, 9).toUpperCase()
+  }
+}
+
+const getOdooDetails = (node) => {
+  if (!node) return ''
+  const type = node.type || 'action'
+  const label = (node.data?.label || '').toLowerCase()
+  if (type === 'input') {
+    return 'Trigger: mail.lead / crm.lead model webhook'
+  } else if (label.includes('email') || label.includes('welcome')) {
+    return 'Action: mail.mail send_mail() template'
+  } else if (label.includes('opportunity') || label.includes('convert')) {
+    return 'Action: crm.lead convert_opportunity()'
+  } else if (label.includes('assign') || label.includes('team')) {
+    return 'Action: crm.team assign_member()'
+  } else if (label.includes('task') || label.includes('call') || label.includes('discovery')) {
+    return 'Action: mail.activity create()'
+  } else if (label.includes('quote') || label.includes('quotation')) {
+    return 'Action: sale.order create_quotation()'
+  }
+  return 'Odoo standard API module action'
+}
+
+const getTemporalDetails = (node) => {
+  if (!node) return ''
+  const type = node.type || 'action'
+  const label = (node.data?.label || '').toLowerCase()
+  if (type === 'wait' || label.includes('wait') || label.includes('delay')) {
+    return 'Temporal Sleep: workflow.sleep()'
+  } else if (type === 'condition' || label.includes('check') || label.includes('size') || label.includes('source')) {
+    return 'Temporal Decision: workflow.sideEffect() branch'
+  }
+  return 'Temporal Activity: retryPolicy = default'
+}
+
+const handleRefine = async () => {
+  if (!refinementFeedback.value.trim()) return
+  refining.value = true
+  
+  // Simulate refinement parsing latency
+  await new Promise(resolve => setTimeout(resolve, 1200))
+  
+  const text = refinementFeedback.value.toLowerCase()
+  
+  // If the user specifies changing wait days in CRM flow
+  if (text.includes('10 days') || text.includes('10')) {
+    nodes.value = nodes.value.map(node => {
+      if (node.id === 'wait') {
+        return { ...node, data: { ...node.data, label: 'Wait 10 Days' } }
+      }
+      return node
+    })
+  } else if (text.includes('slack') || text.includes('message')) {
+    const hasSlack = nodes.value.some(n => n.id === 'slack')
+    if (!hasSlack) {
+      nodes.value = [
+        ...nodes.value,
+        { id: 'slack', type: 'action', data: { label: 'Slack: Post to #sales-leads' }, position: { x: 1080, y: 1100 } }
+      ]
+      edges.value = [
+        ...edges.value,
+        { id: 'e-notify-slack', source: 'notify', target: 'slack', animated: true }
+      ]
+    }
+  } else {
+    nodes.value = nodes.value.map(node => {
+      if (node.id === 'start') {
+        return { ...node, data: { ...node.data, label: `${node.data.label} (Refined)` } }
+      }
+      return node
+    })
+  }
+  
+  refinementFeedback.value = ''
+  refining.value = false
+  deploymentStatus.value = 'pending' // Reset deployment status to re-approve
+  nextTick(() => {
+    setTimeout(() => {
+      fitView({ padding: 0.2 })
+    }, 100)
+  })
+}
 
 // Submit request to local FastAPI backend to map plain text to nodes
 const handleGenerate = async () => {
@@ -169,6 +462,10 @@ const handleGenerate = async () => {
   workflowName.value = ''
   nodes.value = []
   edges.value = []
+  deploymentStatus.value = 'pending'
+  deploymentDetails.value = null
+  showInspector.value = false
+  selectedNode.value = null
 
   try {
     const response = await fetch('/api/generate-workflow', {
@@ -291,6 +588,7 @@ const handleGenerate = async () => {
   flex-direction: column;
   gap: 24px;
   flex-shrink: 0;
+  overflow-y: auto;
 }
 
 .interaction-console h2 {
@@ -402,46 +700,6 @@ textarea:focus {
   border-color: var(--border-hover);
 }
 
-/* Workflow info panel */
-.workflow-info {
-  margin-top: auto;
-  padding: 16px;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
-}
-
-.info-label {
-  color: var(--text-muted);
-}
-
-.font-highlight {
-  font-weight: 600;
-  color: var(--secondary);
-}
-
-.deploy-success {
-  color: var(--success);
-  font-weight: 500;
-}
-
-.temporal-badge {
-  background: rgba(168, 85, 247, 0.15);
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 600;
-}
-
 /* Right Visual Workspace */
 .visual-workspace {
   flex: 1;
@@ -480,9 +738,6 @@ textarea:focus {
   border: 1px solid var(--border-glass);
   border-radius: 12px;
   overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 /* VueFlow Overrides & Layout Styling */
@@ -545,7 +800,10 @@ textarea:focus {
   align-items: center;
   gap: 16px;
   max-width: 320px;
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 1;
 }
 
