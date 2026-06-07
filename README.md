@@ -85,7 +85,7 @@ Deep-dive into specific areas of the ERP Flow platform design inside our `docs` 
 *   💡 [Automation Use Cases & Structures](docs/Automation_idea.md) — CRM pipeline triggers, workflow node types, and edge actions.
 *   🔄 [End-to-End Sequence Diagram](docs/sequence_diagram.md) — Life of a prompt: visual layout generation, client parsing, and Odoo action.
 *   🏗️ [Infrastructure & Container Configs](docs/infrastructure.md) — Multi-container details, PostgreSQL cache setups, and Docker bridge parameters.
-*   ⚙️ [Odoo ERP Engine Integration](docs/ERP_flow_engine.md) — Remote Procedure Call (RPC) interfaces, security models, and server-side automated action rules.
+*   ⚙️ [Odoo ERP Engine Integration](docs/ERP_flow_engine.md) — Remote Procedure Call (RPC) interfaces, security models, and server-side automated action rules...
 
 ---
 
