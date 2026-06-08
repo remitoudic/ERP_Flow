@@ -8,7 +8,7 @@ Transforming natural language intent into durable, visual, and high-performance 
 
 ## 🏗️ System Architecture
 
-Our platform is engineered for **Durable Intelligence**—ensuring visual layout simplicity on the outside, and bulletproof transactional resilience on the inside.
+Our platform is engineered for **Durable Intelligence**—ensuring visual layout simplicity on the outside, and bulletproof transactional resilience on the inside
 
 ```
                   ┌────────────────────────────────────────┐
