@@ -2,7 +2,7 @@
 
 Transforming natural language intent into durable, visual, and high-performance ERP workflows.
 
-**ERP Flow Automation** is a modern, local-first orchestration engine that parses plain English instructions into visual flowcharts, executes them with absolute state resilience, and deploys them directly into the **Odoo 19 ERP** suite
+**ERP Flow Automation** is a modern, local-first orchestration engine that parses plain English instructions into visual flowcharts, executes them with absolute state resilience, and deploys them directly into the **Odoo 19 ERP** suite.
 
 ---
 
